@@ -62,19 +62,17 @@ public class FileConfiguration {
      */
     public FileConfiguration(Plugin plugin, File configFile) throws IOException {
         this.plugin = plugin;
+        this.configFile = configFile;
         defaultCfg = yml.load(new InputStreamReader(plugin.getResourceAsStream(configFile.getName())));
-        loadConfig(configFile);
+        loadConfig();
     }
 
     /**
      * Load a file into this config
-     * @param configFile The yml file
      * @return <tt>true</tt> if it was successfully loaded, <tt>false</tt> if not
      * @throws IOException If an I/O error occurred
      */
-    public boolean loadConfig(File configFile) throws IOException {
-        this.configFile = configFile;
-
+    public boolean loadConfig() throws IOException {
         if(configFile.exists()) {
             config = yml.load(configFile);
             return true;
