@@ -31,7 +31,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public abstract class PluginCommand extends Command {
 
-    private final BungeePlugin plugin;
+    protected final BungeePlugin plugin;
 
     private final String permissionMessage;
     private final String description;
