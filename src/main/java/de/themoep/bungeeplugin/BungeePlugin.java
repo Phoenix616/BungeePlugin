@@ -25,6 +25,7 @@ package de.themoep.bungeeplugin;
  * No warranty is implied by distribution under the terms of this license.
  */
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 
@@ -102,5 +103,12 @@ public abstract class BungeePlugin extends Plugin {
 
     public FileConfiguration getConfig() {
         return pluginConfig;
+    }
+
+    public String translate(String message, String... replacements) {
+        for (int i = 0; i + 1 < replacements.length; i += 2) {
+            message = message.replace("%" + replacements[i] + "%", replacements[i + 1]);
+        }
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 }
