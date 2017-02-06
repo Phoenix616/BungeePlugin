@@ -26,6 +26,7 @@ package de.themoep.bungeeplugin;
  */
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 
@@ -105,10 +106,31 @@ public abstract class BungeePlugin extends Plugin {
         return pluginConfig;
     }
 
+    /**
+     * Add replacements (%var%) to a message and translate colorcodes
+     * @param message       The message
+     * @param replacements  Replacements
+     */
     public String translate(String message, String... replacements) {
+        message = ChatColor.translateAlternateColorCodes('&', message);
         for (int i = 0; i + 1 < replacements.length; i += 2) {
             message = message.replace("%" + replacements[i] + "%", replacements[i + 1]);
         }
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return message;
+    }
+
+    /**
+     * Broadcast a message to all players with a certain permission
+     * @param permission    The permission that the players need
+     * @param message       The message to broadcast
+     * @param replacements  Replacements
+     */
+    public void broadcast(String permission, String message, String... replacements) {
+        message = translate(message, replacements);
+        for (ProxiedPlayer player : getProxy().getPlayers()) {
+            if (permission == null || player.hasPermission(permission)) {
+                player.sendMessage(message);
+            }
+        }
     }
 }
