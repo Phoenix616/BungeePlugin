@@ -45,7 +45,7 @@ public abstract class BungeePlugin extends Plugin {
     @Override
     public void onLoad() {
         try {
-            descConfig = new FileConfiguration(this, getResourceAsStream("plugin.yml") != null ? "plugin.yml" : "bungee.yml");
+            descConfig = new FileConfiguration(this, getResourceAsStream("bungee.yml") != null ? "bungee.yml" : "plugin.yml");
             pluginConfig = new FileConfiguration(this, "config.yml");
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Error while loading plugin. Will not enable!", e);
@@ -59,10 +59,10 @@ public abstract class BungeePlugin extends Plugin {
         Constructor<? extends PluginCommand> extendedConstructor = null;
         try {
             simpleConstructor = commandClass.getConstructor(BungeePlugin.class, String.class);
+        } catch (NoSuchMethodException ignored) {}
+        try {
             extendedConstructor = commandClass.getConstructor(BungeePlugin.class, String.class, String.class, String.class, String.class, String.class, String[].class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        } catch (NoSuchMethodException ignored) {}
 
         Configuration commandSection = descConfig.getSection("commands." + name);
         PluginCommand command = null;
@@ -80,7 +80,7 @@ public abstract class BungeePlugin extends Plugin {
                             aliases != null ? aliases.toArray(new String[aliases.size()]) : new String[0]
                     );
                 } else {
-                    command = extendedConstructor.newInstance(this, name, null);
+                    command = extendedConstructor.newInstance(this, name, null, null, null, null, new String[0]);
                 }
             } else if (simpleConstructor != null) {
                 command = simpleConstructor.newInstance(this, name);
