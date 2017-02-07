@@ -45,7 +45,7 @@ public abstract class BungeePlugin extends Plugin {
     @Override
     public void onLoad() {
         try {
-            descConfig = new FileConfiguration(this, getDescription().getFile());
+            descConfig = new FileConfiguration(this, getResourceAsStream("plugin.yml") != null ? "plugin.yml" : "bungee.yml");
             pluginConfig = new FileConfiguration(this, "config.yml");
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Error while loading plugin. Will not enable!", e);
