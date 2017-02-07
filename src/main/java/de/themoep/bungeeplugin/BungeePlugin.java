@@ -54,7 +54,7 @@ public abstract class BungeePlugin extends Plugin {
         enabled = true;
     }
 
-    protected void registerCommand(String name, Class<? extends PluginCommand> commandClass) {
+    protected PluginCommand registerCommand(String name, Class<? extends PluginCommand> commandClass) {
         Constructor<? extends PluginCommand> simpleConstructor = null;
         Constructor<? extends PluginCommand> extendedConstructor = null;
         try {
@@ -96,6 +96,8 @@ public abstract class BungeePlugin extends Plugin {
         if (command != null) {
             getProxy().getPluginManager().registerCommand(this, command);
         }
+
+        return command;
     }
 
     public boolean isEnabled() {
