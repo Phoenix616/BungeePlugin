@@ -33,6 +33,7 @@ public abstract class PluginCommand extends Command {
 
     protected final BungeePlugin plugin;
 
+    private final String permission;
     private final String permissionMessage;
     private final String description;
     private final String usage;
@@ -42,8 +43,9 @@ public abstract class PluginCommand extends Command {
     }
 
     public PluginCommand(BungeePlugin plugin, String name, String permission, String permissionMessage, String description, String usage, String... aliases) {
-        super(name, permission, aliases);
+        super(name, null, aliases);
         this.plugin = plugin;
+        this.permission = permission;
         this.permissionMessage = permissionMessage != null ? ChatColor.translateAlternateColorCodes('&', permissionMessage) : "";
         this.description = description != null ? ChatColor.translateAlternateColorCodes('&', description) : "";
         this.usage = usage != null ? ChatColor.translateAlternateColorCodes('&', usage) : "/<command>";
@@ -51,8 +53,11 @@ public abstract class PluginCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (!sender.hasPermission(getPermission()) && !getPermissionMessage().isEmpty()) {
-            sender.sendMessage(ChatColor.RED + getPermissionMessage().replace("<permission>", getPermission()));
+        if (getCommandPermission() != null && !sender.hasPermission(getCommandPermission())) {
+            if (!getPermissionMessage().isEmpty()) {
+                sender.sendMessage(ChatColor.RED + getPermissionMessage().replace("<permission>", getPermission()));
+            }
+            return;
         }
 
         if (!run(sender, args) && !getUsage().isEmpty()) {
@@ -66,6 +71,9 @@ public abstract class PluginCommand extends Command {
         return plugin;
     }
 
+    public String getCommandPermission() {
+        return permission;
+    }
 
     public String getPermissionMessage() {
         return permissionMessage;
@@ -78,4 +86,5 @@ public abstract class PluginCommand extends Command {
     public String getUsage() {
         return usage;
     }
+
 }
