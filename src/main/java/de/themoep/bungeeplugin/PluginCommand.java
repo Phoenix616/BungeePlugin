@@ -56,6 +56,8 @@ public abstract class PluginCommand extends Command {
         if (getCommandPermission() != null && !sender.hasPermission(getCommandPermission())) {
             if (!getPermissionMessage().isEmpty()) {
                 sender.sendMessage(ChatColor.RED + getPermissionMessage().replace("<permission>", getPermission()));
+            } else {
+                sender.sendMessage(plugin.getProxy().getTranslation("no_permission"));
             }
             return;
         }
