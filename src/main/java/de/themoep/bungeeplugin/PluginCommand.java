@@ -63,7 +63,7 @@ public abstract class PluginCommand extends Command {
         }
 
         if (!run(sender, args) && !getUsage().isEmpty()) {
-            sender.sendMessage(ChatColor.RED + "Usage: " + getUsage().replace("<command>", getName()));
+            sender.sendMessage(ChatColor.RED + getUsage().replace("<command>", getName()));
         }
     }
 
