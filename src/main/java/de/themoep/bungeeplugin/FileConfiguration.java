@@ -74,7 +74,7 @@ public class FileConfiguration {
      */
     public boolean loadConfig() throws IOException {
         if(configFile.exists()) {
-            config = yml.load(configFile);
+            config = yml.load(configFile, defaultCfg);
             return true;
         } else if(configFile.getParentFile().exists() || configFile.getParentFile().mkdirs()) {
             return createDefaultConfig();
@@ -105,7 +105,7 @@ public class FileConfiguration {
      */
     public boolean createDefaultConfig() throws IOException {
         if(configFile.createNewFile()) {
-            config = new Configuration(defaultCfg);
+            config = yml.load(new InputStreamReader(plugin.getResourceAsStream(configFile.getName())), defaultCfg);
             saveConfig();
             return true;
         }
