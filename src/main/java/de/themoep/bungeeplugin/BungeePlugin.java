@@ -26,6 +26,7 @@ package de.themoep.bungeeplugin;
  */
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -46,6 +47,8 @@ public abstract class BungeePlugin extends Plugin {
     public void onLoad() {
         try {
             descConfig = new FileConfiguration(this, getResourceAsStream("bungee.yml") != null ? "bungee.yml" : "plugin.yml");
+            removeFromConfig(descConfig.getConfiguration(), "name", "main", "version", "author", "depends", "softdepends", "description");
+            descConfig.saveConfig();
             pluginConfig = new FileConfiguration(this, "config.yml");
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Error while loading plugin. Will not enable!", e);
@@ -113,7 +116,7 @@ public abstract class BungeePlugin extends Plugin {
      * @param message       The message
      * @param replacements  Replacements
      */
-    public String translate(String message, String... replacements) {
+    public static String translate(String message, String... replacements) {
         message = ChatColor.translateAlternateColorCodes('&', message);
         for (int i = 0; i + 1 < replacements.length; i += 2) {
             message = message.replace("%" + replacements[i] + "%", replacements[i + 1]);
@@ -127,12 +130,23 @@ public abstract class BungeePlugin extends Plugin {
      * @param message       The message to broadcast
      * @param replacements  Replacements
      */
-    public void broadcast(String permission, String message, String... replacements) {
+    public static void broadcast(String permission, String message, String... replacements) {
         message = translate(message, replacements);
-        for (ProxiedPlayer player : getProxy().getPlayers()) {
+        for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
             if (permission == null || player.hasPermission(permission)) {
                 player.sendMessage(message);
             }
+        }
+    }
+
+    /**
+     * Remove certain paths from a config
+     * @param config    The config to remove the paths from
+     * @param paths     All the paths to remove
+     */
+    public static void removeFromConfig(Configuration config, String... paths) {
+        for (String path : paths) {
+            config.set(path, null);
         }
     }
 }
