@@ -57,7 +57,7 @@ public abstract class BungeePlugin extends Plugin {
         enabled = true;
     }
 
-    protected PluginCommand registerCommand(String name, Class<? extends PluginCommand> commandClass) {
+    public PluginCommand registerCommand(String name, Class<? extends PluginCommand> commandClass) {
         Constructor<? extends PluginCommand> simpleConstructor = null;
         Constructor<? extends PluginCommand> extendedConstructor = null;
         try {
