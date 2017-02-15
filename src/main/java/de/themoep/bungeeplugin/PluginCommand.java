@@ -2,7 +2,12 @@ package de.themoep.bungeeplugin;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * Licensed under the Nietzsche Public License v0.6
@@ -29,7 +34,7 @@ import net.md_5.bungee.api.plugin.Command;
  * No warranty is implied by distribution under the terms of this license.
  */
 
-public abstract class PluginCommand extends Command {
+public abstract class PluginCommand extends Command implements TabExecutor {
 
     protected final BungeePlugin plugin;
 
@@ -68,6 +73,15 @@ public abstract class PluginCommand extends Command {
     }
 
     protected abstract boolean run(CommandSender sender, String[] args);
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        List<String> tabList = new ArrayList<>();
+        for (ProxiedPlayer p : plugin.getProxy().getPlayers())
+            if (args.length == 0 || p.getName().toLowerCase().startsWith(args[args.length - 1].toLowerCase()))
+                tabList.add(p.getName());
+        return tabList;
+    }
 
     public BungeePlugin getPlugin() {
         return plugin;
