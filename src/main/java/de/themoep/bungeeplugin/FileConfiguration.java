@@ -7,6 +7,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
@@ -63,7 +64,12 @@ public class FileConfiguration {
     public FileConfiguration(Plugin plugin, File configFile) throws IOException {
         this.plugin = plugin;
         this.configFile = configFile;
-        defaultCfg = yml.load(new InputStreamReader(plugin.getResourceAsStream(configFile.getName())));
+        InputStream stream = plugin.getResourceAsStream(configFile.getName());
+        if (stream != null) {
+            defaultCfg = yml.load(new InputStreamReader(stream));
+        } else {
+            defaultCfg = new Configuration();
+        }
         loadConfig();
     }
 
@@ -105,7 +111,12 @@ public class FileConfiguration {
      */
     public boolean createDefaultConfig() throws IOException {
         if(configFile.createNewFile()) {
-            config = yml.load(new InputStreamReader(plugin.getResourceAsStream(configFile.getName())), defaultCfg);
+            InputStream stream = plugin.getResourceAsStream(configFile.getName());
+            if (stream != null) {
+                config = yml.load(new InputStreamReader(stream), defaultCfg);
+            } else {
+                config = new Configuration();
+            }
             saveConfig();
             return true;
         }
