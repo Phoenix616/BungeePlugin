@@ -44,6 +44,7 @@ public class FileConfiguration {
     private final Configuration defaultCfg;
     private Configuration config;
     private File configFile;
+    private String defaultFile;
 
     /**
      * FileConfiguration represents a configuration saved in a yml file
@@ -75,6 +76,7 @@ public class FileConfiguration {
     public FileConfiguration(Plugin plugin, File configFile, String defaultFile) throws IOException {
         this.plugin = plugin;
         this.configFile = configFile;
+        this.defaultFile = defaultFile;
         InputStream stream = plugin.getResourceAsStream(defaultFile);
         if (stream != null) {
             defaultCfg = yml.load(new InputStreamReader(stream));
@@ -122,7 +124,7 @@ public class FileConfiguration {
      */
     public boolean createDefaultConfig() throws IOException {
         if(configFile.createNewFile()) {
-            InputStream stream = plugin.getResourceAsStream(configFile.getName());
+            InputStream stream = plugin.getResourceAsStream(defaultFile);
             if (stream != null) {
                 config = yml.load(new InputStreamReader(stream), defaultCfg);
             } else {
