@@ -62,9 +62,20 @@ public class FileConfiguration {
      * @throws IOException If an I/O error occurred
      */
     public FileConfiguration(Plugin plugin, File configFile) throws IOException {
+        this(plugin, configFile, configFile.getName());
+    }
+
+    /**
+     * FileConfiguration represents a configuration saved in a yml file
+     * @param plugin The bungee plugin of the config
+     * @param configFile The yml file
+     * @param defaultFile The name of the default file inside the jar
+     * @throws IOException If an I/O error occurred
+     */
+    public FileConfiguration(Plugin plugin, File configFile, String defaultFile) throws IOException {
         this.plugin = plugin;
         this.configFile = configFile;
-        InputStream stream = plugin.getResourceAsStream(configFile.getName());
+        InputStream stream = plugin.getResourceAsStream(defaultFile);
         if (stream != null) {
             defaultCfg = yml.load(new InputStreamReader(stream));
         } else {
@@ -140,7 +151,11 @@ public class FileConfiguration {
     }
 
     public boolean isSet(String path) {
-        return config.get(path) != null;
+        return isSet(path, false);
+    }
+
+    public boolean isSet(String path, boolean ignoreDefaults) {
+        return (ignoreDefaults ? config.get(path, null) : config.get(path)) != null;
     }
 
     public void set(String path, Object value) {
@@ -177,5 +192,9 @@ public class FileConfiguration {
 
     public Configuration getSection(String path) {
         return config.getSection(path);
+    }
+
+    public boolean isSection(String path) {
+        return config.get(path) instanceof Configuration;
     }
 }
