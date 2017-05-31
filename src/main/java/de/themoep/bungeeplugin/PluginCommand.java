@@ -5,9 +5,12 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
+import net.md_5.bungee.config.Configuration;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 /*
  * Licensed under the Nietzsche Public License v0.6
@@ -42,15 +45,40 @@ public abstract class PluginCommand extends Command implements TabExecutor {
     private final String permissionMessage;
     private final String description;
     private final String usage;
+    private final String[] aliases;
 
     public PluginCommand(BungeePlugin plugin, String name) {
-        this(plugin, name, null, null, null, null);
+        super(name, null);
+        this.plugin = plugin;
+        Configuration commandSection = plugin.getDescriptionConfig().getSection("commands." + name);
+        if (!commandSection.getKeys().isEmpty()) {
+            this.permission = commandSection.getString("permission");
+
+            String permissionMessage = commandSection.getString("permission-message");
+            this.permissionMessage = permissionMessage != null ? ChatColor.translateAlternateColorCodes('&', permissionMessage) : "";
+
+            String description = commandSection.getString("description");
+            this.description = description != null ? ChatColor.translateAlternateColorCodes('&', description) : "";
+
+            String usage = commandSection.getString("usage");
+            this.usage = usage != null ? ChatColor.translateAlternateColorCodes('&', usage) : "/<command>";
+
+            List<String> aliases = commandSection.getStringList("aliases");
+            this.aliases = aliases != null ? aliases.toArray(new String[aliases.size()]) : new String[0];
+        } else {
+            permission = null;
+            permissionMessage = "";
+            description = "";
+            usage = "/<command>";
+            aliases = new String[0];
+        }
     }
 
     public PluginCommand(BungeePlugin plugin, String name, String permission, String permissionMessage, String description, String usage, String... aliases) {
-        super(name, null, aliases);
+        super(name, null);
         this.plugin = plugin;
         this.permission = permission;
+        this.aliases = aliases;
         this.permissionMessage = permissionMessage != null ? ChatColor.translateAlternateColorCodes('&', permissionMessage) : "";
         this.description = description != null ? ChatColor.translateAlternateColorCodes('&', description) : "";
         this.usage = usage != null ? ChatColor.translateAlternateColorCodes('&', usage) : "/<command>";
@@ -85,6 +113,10 @@ public abstract class PluginCommand extends Command implements TabExecutor {
 
     public BungeePlugin getPlugin() {
         return plugin;
+    }
+
+    public String[] getAliases() {
+        return aliases;
     }
 
     public String getCommandPermission() {

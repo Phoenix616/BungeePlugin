@@ -28,13 +28,14 @@ package de.themoep.bungeeplugin;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.logging.Level;
 
 public abstract class BungeePlugin extends Plugin {
@@ -57,50 +58,29 @@ public abstract class BungeePlugin extends Plugin {
         enabled = true;
     }
 
+    /**
+     * Register a new PluginCommand via the command's class
+     * @param name          The name of the command
+     * @param commandClass  The class of the PluginCommand
+     * @return              The newly created PluginCommand
+     * @deprecated  Directly create a PluginCommand object via its constructor and register via {@link PluginManager#registerCommand(Plugin, Command)}
+     */
+    @Deprecated
     public PluginCommand registerCommand(String name, Class<? extends PluginCommand> commandClass) {
-        Constructor<? extends PluginCommand> simpleConstructor = null;
-        Constructor<? extends PluginCommand> extendedConstructor = null;
         try {
-            simpleConstructor = commandClass.getConstructor(BungeePlugin.class, String.class);
-        } catch (NoSuchMethodException ignored) {}
-        try {
-            extendedConstructor = commandClass.getConstructor(BungeePlugin.class, String.class, String.class, String.class, String.class, String.class, String[].class);
-        } catch (NoSuchMethodException ignored) {}
+            Constructor<? extends PluginCommand> constructor = commandClass.getConstructor(BungeePlugin.class, String.class);
+            PluginCommand command = constructor.newInstance(this, name);
+            getProxy().getPluginManager().registerCommand(this, command);
 
-        Configuration commandSection = descConfig.getSection("commands." + name);
-        PluginCommand command = null;
-        try {
-            if (extendedConstructor != null) {
-                if (!commandSection.getKeys().isEmpty()) {
-                    List<String> aliases = commandSection.getStringList("aliases");
-                    command = extendedConstructor.newInstance(
-                            this,
-                            name,
-                            commandSection.getString("permission"),
-                            commandSection.getString("permission-message"),
-                            commandSection.getString("description"),
-                            commandSection.getString("usage"),
-                            aliases != null ? aliases.toArray(new String[aliases.size()]) : new String[0]
-                    );
-                } else {
-                    command = extendedConstructor.newInstance(this, name, null, null, null, null, new String[0]);
-                }
-            } else if (simpleConstructor != null) {
-                command = simpleConstructor.newInstance(this, name);
-            } else {
-                getLogger().log(Level.SEVERE, "Could not find any constructors in the command class " + commandClass + "! Disabling plugin!");
-                enabled = false;
-            }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            getLogger().log(Level.SEVERE, "Error while registering command "  + name + "! Disabling plugin!", e);
+            return command;
+        } catch (NoSuchMethodException ignored) {
+            getLogger().log(Level.SEVERE, "Could not find constructor in the command class " + commandClass + "! Disabling plugin!");
+            enabled = false;
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            getLogger().log(Level.SEVERE, "Could not create new command instance for class " + commandClass + "! Disabling plugin!", e);
             enabled = false;
         }
-
-        if (command != null) {
-            getProxy().getPluginManager().registerCommand(this, command);
-        }
-
-        return command;
+        return null;
     }
 
     public boolean isEnabled() {
@@ -109,6 +89,10 @@ public abstract class BungeePlugin extends Plugin {
 
     public FileConfiguration getConfig() {
         return pluginConfig;
+    }
+
+    public FileConfiguration getDescriptionConfig() {
+        return descConfig;
     }
 
     /**
