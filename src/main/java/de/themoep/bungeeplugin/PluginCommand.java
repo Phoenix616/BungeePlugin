@@ -7,10 +7,8 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 import net.md_5.bungee.config.Configuration;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 /*
  * Licensed under the Nietzsche Public License v0.6
@@ -37,9 +35,9 @@ import java.util.logging.Level;
  * No warranty is implied by distribution under the terms of this license.
  */
 
-public abstract class PluginCommand extends Command implements TabExecutor {
+public abstract class PluginCommand<T extends BungeePlugin> extends Command implements TabExecutor {
 
-    protected final BungeePlugin plugin;
+    protected final T plugin;
 
     private final String permission;
     private final String permissionMessage;
@@ -47,7 +45,7 @@ public abstract class PluginCommand extends Command implements TabExecutor {
     private final String usage;
     private final String[] aliases;
 
-    public PluginCommand(BungeePlugin plugin, String name) {
+    public PluginCommand(T plugin, String name) {
         super(name, null);
         this.plugin = plugin;
         Configuration commandSection = plugin.getDescriptionConfig().getSection("commands." + name);
@@ -74,7 +72,7 @@ public abstract class PluginCommand extends Command implements TabExecutor {
         }
     }
 
-    public PluginCommand(BungeePlugin plugin, String name, String permission, String permissionMessage, String description, String usage, String... aliases) {
+    public PluginCommand(T plugin, String name, String permission, String permissionMessage, String description, String usage, String... aliases) {
         super(name, null);
         this.plugin = plugin;
         this.permission = permission;
@@ -111,7 +109,7 @@ public abstract class PluginCommand extends Command implements TabExecutor {
         return tabList;
     }
 
-    public BungeePlugin getPlugin() {
+    public T getPlugin() {
         return plugin;
     }
 

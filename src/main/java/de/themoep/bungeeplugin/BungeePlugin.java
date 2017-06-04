@@ -28,14 +28,10 @@ package de.themoep.bungeeplugin;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.api.plugin.PluginManager;
 import net.md_5.bungee.config.Configuration;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 
 public abstract class BungeePlugin extends Plugin {
@@ -56,31 +52,6 @@ public abstract class BungeePlugin extends Plugin {
             enabled = false;
         }
         enabled = true;
-    }
-
-    /**
-     * Register a new PluginCommand via the command's class
-     * @param name          The name of the command
-     * @param commandClass  The class of the PluginCommand
-     * @return              The newly created PluginCommand
-     * @deprecated  Directly create a PluginCommand object via its constructor and register via {@link PluginManager#registerCommand(Plugin, Command)}
-     */
-    @Deprecated
-    public PluginCommand registerCommand(String name, Class<? extends PluginCommand> commandClass) {
-        try {
-            Constructor<? extends PluginCommand> constructor = commandClass.getConstructor(BungeePlugin.class, String.class);
-            PluginCommand command = constructor.newInstance(this, name);
-            getProxy().getPluginManager().registerCommand(this, command);
-
-            return command;
-        } catch (NoSuchMethodException ignored) {
-            getLogger().log(Level.SEVERE, "Could not find constructor in the command class " + commandClass + "! Disabling plugin!");
-            enabled = false;
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            getLogger().log(Level.SEVERE, "Could not create new command instance for class " + commandClass + "! Disabling plugin!", e);
-            enabled = false;
-        }
-        return null;
     }
 
     public boolean isEnabled() {
