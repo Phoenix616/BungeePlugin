@@ -180,6 +180,14 @@ public class FileConfiguration {
         return config.getInt(path, def);
     }
 
+    public long getLong(String path) {
+        return config.getLong(path);
+    }
+
+    public long getLong(String path, int def) {
+        return config.getLong(path, def);
+    }
+
     public String getString(String path) {
         return config.getString(path);
     }
