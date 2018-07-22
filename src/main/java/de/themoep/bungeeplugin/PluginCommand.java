@@ -85,10 +85,12 @@ public abstract class PluginCommand<T extends BungeePlugin> extends Command impl
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (getCommandPermission() != null && !sender.hasPermission(getCommandPermission())) {
-            if (!getPermissionMessage().isEmpty()) {
-                sender.sendMessage(ChatColor.RED + getPermissionMessage().replace("<permission>", getCommandPermission()));
-            } else {
-                sender.sendMessage(plugin.getProxy().getTranslation("no_permission"));
+            if (!onPermissionDenied(sender, args)) {
+                if (!getPermissionMessage().isEmpty()) {
+                    sender.sendMessage(ChatColor.RED + getPermissionMessage().replace("<permission>", getCommandPermission()));
+                } else {
+                    sender.sendMessage(plugin.getProxy().getTranslation("no_permission"));
+                }
             }
             return;
         }
@@ -96,6 +98,16 @@ public abstract class PluginCommand<T extends BungeePlugin> extends Command impl
         if (!run(sender, args) && !getUsage().isEmpty()) {
             sender.sendMessage(ChatColor.RED + getUsage().replace("<command>", getName()));
         }
+    }
+
+    /**
+     * Called when the sender doesn't have the permission to run this command
+     * @param sender The sender that failed the permission check
+     * @param args The command arguments
+     * @return <tt>true</tt> if it was handled; <tt>false</tt> if the standard permission message should be send
+     */
+    protected boolean onPermissionDenied(CommandSender sender, String[] args) {
+        return false;
     }
 
     protected abstract boolean run(CommandSender sender, String[] args);
