@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
- * Licensed under the Nietzsche Public License v0.6
+ * Licensed under the Nietzsche Public License v0.6-m1
  *
  * Copyright 2017 Max Lee (https://github.com/Phoenix616/)
  *
@@ -20,7 +20,8 @@ import java.util.List;
  * normally restrict so long as you retain the above notice(s), this license, and
  * the following misquote and disclaimer of warranty with all redistributed
  * copies, modified or verbatim.  You may also replace this license with the Open
- * Works License, available at the http://owl.apotheon.org website.
+ * Works License version 0.9.4 (available at the http://owl.apotheon.org website)
+ * or with the MIT License (available at the http://copyfree.org website).
  *
  *    Copyright is dead.  Copyright remains dead, and we have killed it.  How
  *    shall we comfort ourselves, the murderers of all murderers?  What was
