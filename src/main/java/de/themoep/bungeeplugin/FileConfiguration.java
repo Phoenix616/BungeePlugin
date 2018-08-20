@@ -165,36 +165,72 @@ public class FileConfiguration {
         config.set(path, value);
     }
 
+    public Object get(String path) {
+        return config.get(path);
+    }
+
+    public Object get(String path, Object def) {
+        return config.get(path, def);
+    }
+
     public boolean getBoolean(String path) {
-        return config.getBoolean(path);
+        return getBoolean(path, defaultCfg.getBoolean(path));
     }
 
     public boolean getBoolean(String path, boolean def) {
-        return config.getBoolean(path, def);
+        Object value = config.get(path);
+        if (value instanceof Boolean) {
+            return (boolean) value;
+        } else if (value instanceof String) {
+            return ((String) value).equalsIgnoreCase("true");
+        }
+        return def;
     }
 
     public int getInt(String path) {
-        return config.getInt(path);
+        return getInt(path, defaultCfg.getInt(path));
     }
 
     public int getInt(String path, int def) {
-        return config.getInt(path, def);
+        Object value = config.get(path);
+        if (value instanceof Integer) {
+            return (int) value;
+        } else if (value instanceof String) {
+            try {
+                return Integer.parseInt((String) value);
+            } catch (NumberFormatException ignored) {};
+        }
+        return def;
     }
 
     public long getLong(String path) {
-        return config.getLong(path);
+        return getLong(path, defaultCfg.getLong(path));
     }
 
-    public long getLong(String path, int def) {
-        return config.getLong(path, def);
+    public long getLong(String path, long def) {
+        Object value = config.get(path);
+        if (value instanceof Long) {
+            return (long) value;
+        } else if (value instanceof String) {
+            try {
+                return Long.parseLong((String) value);
+            } catch (NumberFormatException ignored) {};
+        }
+        return def;
     }
 
     public String getString(String path) {
-        return config.getString(path);
+        return getString(path, defaultCfg.getString(path));
     }
 
     public String getString(String path, String def) {
-        return config.getString(path, def);
+        Object value = config.get(path);
+        if (value instanceof String) {
+            return (String) value;
+        } else if (value != null) {
+            return value.toString();
+        }
+        return def;
     }
 
     public List<String> getStringList(String path) {
@@ -207,5 +243,34 @@ public class FileConfiguration {
 
     public boolean isSection(String path) {
         return config.get(path) instanceof Configuration;
+    }
+
+    public boolean isList(String path) {
+        return config.get(path) instanceof List;
+    }
+
+    public boolean isStringList(String path) {
+        Object value = config.get(path);
+        return value instanceof List && !((List) value).isEmpty() && ((List) value).get(0) instanceof String;
+    }
+
+    public boolean isString(String path) {
+        return config.get(path) instanceof String;
+    }
+
+    public boolean isInt(String path) {
+        return config.get(path) instanceof Integer;
+    }
+
+    public boolean isLong(String path) {
+        return config.get(path) instanceof Long;
+    }
+
+    public boolean isDouble(String path) {
+        return config.get(path) instanceof Double;
+    }
+
+    public boolean isBoolean(String path) {
+        return config.get(path) instanceof Boolean;
     }
 }
