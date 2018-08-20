@@ -182,7 +182,11 @@ public class FileConfiguration {
         if (value instanceof Boolean) {
             return (boolean) value;
         } else if (value instanceof String) {
-            return ((String) value).equalsIgnoreCase("true");
+            if (((String) value).equalsIgnoreCase("true")) {
+                return true;
+            } else if (((String) value).equalsIgnoreCase("false")) {
+                return false;
+            }
         }
         return def;
     }
