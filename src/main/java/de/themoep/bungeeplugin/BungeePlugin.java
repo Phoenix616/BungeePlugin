@@ -32,6 +32,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
@@ -47,7 +48,7 @@ public abstract class BungeePlugin extends Plugin {
             descConfig = new FileConfiguration(this, getResourceAsStream("bungee.yml") != null ? "bungee.yml" : "plugin.yml");
             removeFromConfig(descConfig.getConfiguration(), "name", "main", "version", "author", "depends", "softdepends", "description");
             descConfig.saveConfig();
-            pluginConfig = new FileConfiguration(this, getResourceAsStream("bungee-config.yml") != null ? "bungee-config.yml" : "config.yml");
+            pluginConfig = new FileConfiguration(this, new File(getDataFolder(), "config.yml"), getResourceAsStream("bungee-config.yml") != null ? "bungee-config.yml" : "config.yml");
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Error while loading plugin. Will not enable!", e);
             enabled = false;
