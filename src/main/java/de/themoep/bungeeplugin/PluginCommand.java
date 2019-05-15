@@ -65,6 +65,7 @@ public abstract class PluginCommand<T extends BungeePlugin> extends Command impl
             List<String> aliases = commandSection.getStringList("aliases");
             this.aliases = aliases != null ? aliases.toArray(new String[aliases.size()]) : new String[0];
         } else {
+            plugin.getLogger().warning("Command " + name + " is not defined in plugin description?");
             permission = null;
             permissionMessage = "";
             description = "";
