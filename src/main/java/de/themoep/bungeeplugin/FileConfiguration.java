@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.logging.Level;
 
 /*
  * Licensed under the Nietzsche Public License v0.6-m1
@@ -80,7 +81,14 @@ public class FileConfiguration {
         this.defaultFile = defaultFile;
         InputStream stream = plugin.getResourceAsStream(defaultFile);
         if (stream != null) {
-            defaultCfg = yml.load(new InputStreamReader(stream));
+            Configuration jarConfig;
+            try {
+                jarConfig = yml.load(new InputStreamReader(stream));
+            } catch (Exception e) {
+                jarConfig = new Configuration();
+                plugin.getLogger().log(Level.WARNING, "Could not load default config for " + configFile.getName() + " from jar!", e);
+            }
+            defaultCfg = jarConfig;
         } else {
             defaultCfg = new Configuration();
         }
