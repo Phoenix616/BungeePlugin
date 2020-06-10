@@ -46,7 +46,8 @@ public abstract class BungeePlugin extends Plugin {
     public void onLoad() {
         try {
             descConfig = new FileConfiguration(this, getResourceAsStream("bungee.yml") != null ? "bungee.yml" : "plugin.yml");
-            removeFromConfig(descConfig.getConfiguration(), "name", "main", "version", "author", "depends", "softdepends", "description");
+            removeFromConfig(descConfig.getConfiguration(), "name", "main", "version", "author", "depends", "softDepends", "description");
+            checkInvalid(descConfig.getConfiguration(), "softdepends", "soft-depends", "depend");
             descConfig.saveConfig();
             pluginConfig = new FileConfiguration(this, new File(getDataFolder(), "config.yml"), getResourceAsStream("bungee-config.yml") != null ? "bungee-config.yml" : "config.yml");
         } catch (IOException e) {
@@ -104,6 +105,14 @@ public abstract class BungeePlugin extends Plugin {
     public static void removeFromConfig(Configuration config, String... paths) {
         for (String path : paths) {
             config.set(path, null);
+        }
+    }
+
+    private void checkInvalid(Configuration configuration, String... invalid) {
+        for (String s : invalid) {
+            if (configuration.contains(s)) {
+                getLogger().log(Level.WARNING, "Plugin description config contains invalid property '" + s + "'!");
+            }
         }
     }
 }
