@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -132,14 +133,14 @@ public class FileConfiguration {
      * @throws IOException If an I/O error occurred
      */
     public boolean createDefaultConfig() throws IOException {
-        if(configFile.createNewFile()) {
+        if (!configFile.exists()) {
             InputStream stream = plugin.getResourceAsStream(defaultFile);
             if (stream != null) {
                 config = yml.load(new InputStreamReader(stream), defaultCfg);
+                Files.copy(plugin.getResourceAsStream(defaultFile), configFile.toPath());
             } else {
                 config = new Configuration();
             }
-            saveConfig();
             return true;
         }
         return false;
