@@ -86,7 +86,7 @@ public abstract class PluginCommand<T extends BungeePlugin> extends Command impl
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if (getCommandPermission() != null && !sender.hasPermission(getCommandPermission())) {
+        if (!hasCommandPermission(sender)) {
             if (!onPermissionDenied(sender, args)) {
                 if (!getPermissionMessage().isEmpty()) {
                     sender.sendMessage(ChatColor.RED + getPermissionMessage().replace("<permission>", getCommandPermission()));
@@ -100,6 +100,15 @@ public abstract class PluginCommand<T extends BungeePlugin> extends Command impl
         if (!run(sender, args) && !getUsage().isEmpty()) {
             sender.sendMessage(ChatColor.RED + getUsage().replace("<command>", getName()));
         }
+    }
+
+    /**
+     * Check if a sender has permission (if there are any) for this command
+     * @param sender The sender to check
+     * @return <tt>true</tt> if the sender has the permission or the permission isn't set
+     */
+    public boolean hasCommandPermission(CommandSender sender) {
+        return getCommandPermission() == null || sender.hasPermission(getCommandPermission());
     }
 
     /**
@@ -117,9 +126,10 @@ public abstract class PluginCommand<T extends BungeePlugin> extends Command impl
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         List<String> tabList = new ArrayList<>();
-        for (ProxiedPlayer p : plugin.getProxy().getPlayers())
-            if (args.length == 0 || p.getName().toLowerCase().startsWith(args[args.length - 1].toLowerCase()))
-                tabList.add(p.getName());
+        if (hasCommandPermission(sender))
+            for (ProxiedPlayer p : plugin.getProxy().getPlayers())
+                if (args.length == 0 || p.getName().toLowerCase().startsWith(args[args.length - 1].toLowerCase()))
+                    tabList.add(p.getName());
         return tabList;
     }
 
