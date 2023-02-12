@@ -108,7 +108,7 @@ public abstract class PluginCommand<T extends BungeePlugin> extends Command impl
      * @return <tt>true</tt> if the sender has the permission or the permission isn't set
      */
     public boolean hasCommandPermission(CommandSender sender) {
-        return getCommandPermission() == null || sender.hasPermission(getCommandPermission());
+        return getCommandPermission() == null || getCommandPermission().isEmpty() || sender.hasPermission(getCommandPermission());
     }
 
     /**
