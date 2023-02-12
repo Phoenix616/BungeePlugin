@@ -103,6 +103,22 @@ public abstract class PluginCommand<T extends BungeePlugin> extends Command impl
     }
 
     /**
+     * @deprecated Use {@link #hasCommandPermission(CommandSender)} instead!
+     */
+    @Deprecated
+    public boolean hasPermission(CommandSender sender) {
+        return super.hasPermission(sender);
+    }
+
+    /**
+     * @deprecated Use {@link #getCommandPermission()} instead!
+     */
+    @Deprecated
+    public String getPermission() {
+        return super.getPermission();
+    }
+
+    /**
      * Check if a sender has permission (if there are any) for this command
      * @param sender The sender to check
      * @return <tt>true</tt> if the sender has the permission or the permission isn't set
