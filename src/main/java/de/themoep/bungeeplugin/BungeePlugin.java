@@ -26,15 +26,12 @@ package de.themoep.bungeeplugin;
  * No warranty is implied by distribution under the terms of this license.
  */
 
-import io.github.waterfallmc.waterfall.event.ProxyDefineCommandsEvent;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
-import net.md_5.bungee.event.EventHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,19 +51,13 @@ public abstract class BungeePlugin extends Plugin implements Listener {
             checkInvalid(descConfig.getConfiguration(), "softdepends", "soft-depends", "depend");
             descConfig.saveConfig();
             pluginConfig = new FileConfiguration(this, new File(getDataFolder(), "config.yml"), getResourceAsStream("bungee-config.yml") != null ? "bungee-config.yml" : "config.yml");
-            getProxy().getPluginManager().registerListener(this, this);
+            try {
+                getProxy().getPluginManager().registerListener(this, new WaterfallListener());
+            } catch (Throwable ignored) {}
             enabled = true;
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Error while loading plugin. Will not enable!", e);
         }
-    }
-
-    @EventHandler
-    public void onCommandsDefine(ProxyDefineCommandsEvent event) {
-        // Remove commands that the player doesn't have access to
-        if (event.getSender() instanceof CommandSender sender)
-            event.getCommands().entrySet().removeIf(
-                    e -> e.getValue() instanceof PluginCommand pluginCommand && !pluginCommand.hasCommandPermission(sender));
     }
 
     public boolean isEnabled() {
